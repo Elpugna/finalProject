@@ -1,0 +1,76 @@
+server:
+  port: 8081
+  #  port: 8083
+  cors:
+    origins:
+      - http://localhost:8080
+info:
+  app:
+    name: Checkout Resource server
+
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/testdb
+    username: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/Auth-Server
+          jwk-set-uri: http://localhost:8080/realms/Auth-Server/protocol/openid-connect/certs
+  #          jws-algorithm: RS512  #To use with NimbusJWTDecoder
+
+  flyway:
+    locations:
+      - classpath:/db/migration
+      - classpath:/db/testdata
+    enabled: true
+    baseline-on-migrate: true
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - loggers
+          - metrics
+  endpoint:
+    health:
+      group:
+        custom:
+          inlcude:
+            - diskSpace
+            - ping
+          show-components: always
+          show-details: always
+          status:
+            http-mapping:
+              uo: 207
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: INFO
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+
+
